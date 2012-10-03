@@ -19,6 +19,13 @@ define(['jquery', 'backbone', 'models/UserModel'], function($, Backbone, UserMod
       // The render method is called when Models are added or removed to the Collection
       this.collection.on("add remove", this.render, this);
 
+      var that = this;
+      $("form#createUser input").on("blur", function(event) {
+        var attr = event.srcElement.id;
+        var errorMessage = that.model.preValidate(attr, $("#" + attr).val());
+        that.setValidity(!errorMessage, attr);
+      });
+
       // Twitter Bootstrap Modal Logic
       $("#myModal").on("hidden", function() {
 
@@ -50,6 +57,16 @@ define(['jquery', 'backbone', 'models/UserModel'], function($, Backbone, UserMod
 
     },
 
+    setValidity : function(b, attr) {
+      if (b) {
+          this.$el.find("#" + attr).removeClass("invalid");
+          this.$el.find("#" + attr).addClass("valid");
+      }
+      else {
+          this.$el.find("#" + attr).addClass("invalid");
+          this.$el.find("#" + attr).removeClass("valid");
+      }
+    },
     // Renders all of the User models on the UI
     render : function() {
 
@@ -62,12 +79,10 @@ define(['jquery', 'backbone', 'models/UserModel'], function($, Backbone, UserMod
 
       Backbone.Validation.bind(this, {
         valid : function(view, attr) {
-          view.$el.find("#" + attr).removeClass("invalid");
-          view.$el.find("#" + attr).addClass("valid");
+          view.setValidity(true, attr);
         },
         invalid : function(view, attr, error) {
-          view.$el.find("#" + attr).addClass("invalid");
-          view.$el.find("#" + attr).removeClass("valid");
+          view.setValidity(false, attr);
         }
       });
 

@@ -30,7 +30,7 @@ define(["jquery", "backbone"], function($, Backbone) {
         pattern : 'email'
       },
       phone : {
-        required : true
+        pattern : 'digits'
       }
     }
 
